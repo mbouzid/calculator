@@ -5,7 +5,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class Debut extends ActionBarActivity {
-
+    
+    /**
+     * @member @private {TextView} m_output - the display output 
+     * */
+    private TextView m_output ;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
