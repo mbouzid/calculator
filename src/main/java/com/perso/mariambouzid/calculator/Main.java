@@ -5,7 +5,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import java.util.Stack; /** used for the class Calculator **/
 
-public class Debut extends ActionBarActivity 
+public class Main extends ActionBarActivity 
 {
     
     public class Calculator
@@ -16,11 +16,11 @@ public class Debut extends ActionBarActivity
     {
         /**
          *  This is a description of the members of the class Calculator.
-         *  @member @private {Stack<String>} m_operators - the operators input.
-         *  @member @private {Stack<int>} m_figures - the figures input.
+         *  @member @private {Stack<String>} m_operators - the operators' input.
+         *  @member @private {Stack<Integer>} m_figures - the figures' input.
          * */
          private Stack<String> m_operators ;
-         private Stack<int> m_figures ;
+         private Stack<Integer> m_figures ;
         
         public Calculator()
         /**
@@ -30,49 +30,69 @@ public class Debut extends ActionBarActivity
          * */
         {
             m_operators= new Stack<String>();
-            m_figures= new Stack<int>();
+            m_figures= new Stack<Integer>();
         }
         
-        public boolean isOperator(char c) 
+        public boolean isOperator(String str) 
         /**
-         *  Return true if the char is an operator (among + and -) , else return false.
-         *  @method @public @readonly
-         *  @param {char} c - a character.
+         *  Return true if the string is an operator (among + and -) , else return false.
+         *  @method @public
+         *  @param {String} str - a string.
          *  @return {boolean} 
          * */
         {
-            return ((c=='+')||(c=='-'));
+            return ((str.equals("+"))||(str.equals("-")));
         }
         
         public int calculate( String expression )
         /**
          *  Return the result of the calculation of the expression. 
-         *  It parses the expression and pushes the differents tokens in their respective stacks.
+         *  It parses the expression and pushes the different tokens in their respective stacks.
          *  @method @public
          *  @param {String} expression - an arithmetic expression.
          *  @return {int} - the result.
          * */
         {
             int result = 0 ;
-            
-        /**
-         * I'll continue this part later.. 
-         * */
-           while ( expression != null )
-           {
-               if (!isOperator(expression[i]))
+            int i=0 ;
+          
+           
+            while ( i!= expression.length())
+            {
+        	 
+               if (!isOperator(expression.substring(i,i+1)))
                {
-                  m_figures.push((expression[i]).getNumericValue());
-            
+            	 
+                  m_figures.push(Integer.parseInt(expression.substring(i,i+1)));
+                  if (!m_operators.isEmpty())
+                  {
+                	  String operator = m_operators.pop();
+                	  if (operator.equals("+"))
+                	  { 
+                		  m_figures.push(m_figures.pop()+m_figures.pop());
+                	  }
+                	  else
+                		  if (operator.equals("-"))
+                		  {
+                			  Integer a,b ;
+                    		  a=m_figures.pop();
+                    		  b=m_figures.pop();
+                		
+                			  m_figures.push(b-a);
+                		  }
+                  }
                }
                else
                {
-                   m_operators.push(expression[i]);
+                   m_operators.push(expression.substring(i,i+1));
+                 
                }
                i++;
            }
-            
-            return result ;
+           
+           
+            result=m_figures.pop();
+            return  result ;
         }
     }
     
