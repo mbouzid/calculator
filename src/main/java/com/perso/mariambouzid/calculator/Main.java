@@ -53,46 +53,46 @@ public class Main extends ActionBarActivity
          *  @return {int} - the result.
          * */
         {
-            int result = 0 ;
-            int i=0 ;
-          
+            int result = 0 , i =0;
+            String [] figures = expression.split("([^0-9])");
            
-            while ( i!= expression.length())
+            String [] operators = expression.split("([0-9])");
+            
+            int n = figures.length;
+            int m = operators.length;
+            
+            for (int j =0 ; j<n ; ++j)
             {
-        	 
-               if (!isOperator(expression.substring(i,i+1)))
-               {
-            	 
-                  m_figures.push(Integer.parseInt(expression.substring(i,i+1)));
-                  if (!m_operators.isEmpty())
-                  {
-                	  String operator = m_operators.pop();
-                	  if (operator.equals("+"))
-                	  { 
-                		  m_figures.push(m_figures.pop()+m_figures.pop());
-                	  }
-                	  else
-                		  if (operator.equals("-"))
-                		  {
-                			  Integer a,b ;
-                    		  a=m_figures.pop();
-                    		  b=m_figures.pop();
-                		
-                			  m_figures.push(b-a);
-                		  }
-                  }
-               }
-               else
-               {
-                   m_operators.push(expression.substring(i,i+1));
-                 
-               }
-               i++;
-           }
-           
-           
-            result=m_figures.pop();
-            return  result ;
+            
+            	m_figures.push(Integer.parseInt(figures[j]));
+            }
+            for (int j =0 ; j<m ; ++j)
+            {
+       
+            	m_operators.push(operators[j]);
+            }
+            
+            while ( i!= n)
+            {
+            	if (!m_operators.isEmpty())
+            	{
+            		String operator = m_operators.pop();
+            		if (operator.equals("+"))
+            		{
+            			m_figures.push(m_figures.pop()+m_figures.pop());
+            		}
+            		else if (operator.equals("-"))
+            		{
+            			int a = m_figures.pop();
+            			int b = m_figures.pop();
+            			m_figures.push(b-a);
+            		}
+            	}
+            	i++;
+            }
+         
+            result = m_figures.pop();
+            return result ;
         }
     }
     
