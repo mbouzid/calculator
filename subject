@@ -1,0 +1,36 @@
+I. Création de l'interface
+
+Ce premier agencement est composé de boutons et d'une étiquette pour l'affichage du résultat. Il
+vous est demandé de respecter les proportions, les tailles de fonts et l'encadrement de l'écran. Tout
+cet agencement a été réalisé avec un programme Java minimal, mais en construisant un fichier de
+ressource XML adapté (un layout) utilisant les attributs mis à notre disposition par le SDK.
+
+II. Récupération des événements de l'interface
+
+La deuxième étape est de récupérer les valeurs des boutons qui seront utilisés par l'utilisateur.
+Depuis le fichier XML, il est possible d'indiquer une méthode de notre activité qui gérera l'évènement
+déclenché par l'appuie d'une touche. Ainsi, il est possible de mettre à jour l'affichage de l'écran pour
+que le texte affiché change au fur et à mesure que des touches sont enfoncées. Dans la capture
+d'écran précédente, l'utilisateur a pressé respectivement les touches : « 5 », « + », « 6 », « - » et
+« 2 ». La touche « AC » efface l'écran, il devient vide comme au lancement de l'activité.
+
+III. Réaliser le calcul
+
+Pour le moment, l'affichage évolue au fur et à mesure que des touches sont enfoncées, mais aucun
+calcul ne s'effectue. Il est donc demandé d'intégrer dans notre activité une classe imbriquée
+« Calculatrice » dédiée au calcul des opérations saisies par l'utilisateur. La méthode de calcul
+implémentée dans la classe Calculatrice prendra comme argument une chaîne de caractères
+(String en Java) qui contiendra l'expression saisie par l'utilisateur et renverra le résultat du calcul.
+Il faudra donc parser la chaîne pour extraire les nombres et les opérateurs (ici seulement le « + » et
+le « - ») et les répartir dans deux piles différentes (une pile pour les nombres et une pile pour les opérateurs). 
+L'appui sur la touche « = » provoque le calcul et l'affichage du résultat à l'écran de la
+calculatrice. Ici il n'y a pas de problème de priorité entre opérateurs puisque tous sont du même
+niveau de priorité. De plus tous les opérateurs sont d'arité 2 ce qui facilite la gestion. Le principe
+reste le même qu'une calculatrice classique, il faut dépiler la pile des opérateurs tant qu'elle n'est
+pas vide puis dépiler au fur et à mesure les opérandes, effectuer un calcul, puis ré-empiler le résultat
+du calcul sur la pile des opérandes.
+
+IV. Déploiement
+
+Pour effectuer les tests nécessaires, utilisez les appareils à votre disposition pour tester votre
+application. Si vous êtes content de votre travail c'est gagné !
