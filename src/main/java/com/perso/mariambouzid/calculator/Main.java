@@ -16,11 +16,11 @@ public class Main extends ActionBarActivity
     {
         /**
          *  This is a description of the members of the class Calculator.
-         *  @member @private {Stack<String>} m_operators - the operators' input.
-         *  @member @private {Stack<Integer>} m_figures - the figures' input.
+         *  @member @private {Stack<Integer>} m_operators - the operators input.
+         *  @member @private {Stack<Double>} m_figures - the figures input.
          * */
-         private Stack<String> m_operators ;
-         private Stack<Integer> m_figures ;
+         private Stack<Integer> m_operators ;
+         private Stack<Double> m_figures ;
         
         public Calculator()
         /**
@@ -29,73 +29,86 @@ public class Main extends ActionBarActivity
          *  @constructor @public 
          * */
         {
-            m_operators= new Stack<String>();
-            m_figures= new Stack<Integer>();
+            m_operators= new Stack<Integer>();
+            m_figures= new Stack<Double>();
         }
         
-        public boolean isOperator(String str) 
+        public boolean isOperator(char c) 
         /**
-         *  Return true if the string is an operator (among + and -) , else return false.
-         *  @method @public
-         *  @param {String} str - a string.
+         *  Return true if the character is an operator (among + , - and =) , else return false.
+         *  @method @public 
+         *  @param {char} c - a character.
          *  @return {boolean} 
          * */
         {
-            return ((str.equals("+"))||(str.equals("-")));
+            return ((c=='+')||(c=='-')||(c=='='));
         }
         
-        public int calculate( String expression )
+        
+        
+        public double calculate( String expression )
         /**
          *  Return the result of the calculation of the expression. 
-         *  It parses the expression and pushes the different tokens in their respective stacks.
+         *  It parses the expression and pushes the  tokens in their respective stacks.
          *  @method @public
          *  @param {String} expression - an arithmetic expression.
-         *  @return {int} - the result.
+         *  @return {double} - the result.
          * */
         {
-            int result = 0 ;
-            int i=0 ;
-          
-           
-            while ( i!= expression.length())
+            double result=0;
+            int n= expression.length();
+            String token ="";
+            int i=0;
+            while(i<n)
             {
-        	 
-               if (!isOperator(expression.substring(i,i+1)))
-               {
-            	 
-                  m_figures.push(Integer.parseInt(expression.substring(i,i+1)));
-                  if (!m_operators.isEmpty())
-                  {
-                	  String operator = m_operators.pop();
-                	  if (operator.equals("+"))
-                	  { 
-                		  m_figures.push(m_figures.pop()+m_figures.pop());
-                	  }
-                	  else
-                		  if (operator.equals("-"))
-                		  {
-                			  Integer a,b ;
-                    		  a=m_figures.pop();
-                    		  b=m_figures.pop();
-                		
-                			  m_figures.push(b-a);
-                		  }
-                  }
-               }
-               else
-               {
-                   m_operators.push(expression.substring(i,i+1));
-                 
-               }
-               i++;
-           }
-           
-           
+            	if(!isOperator(expression.charAt(i)))
+            	{
+            		token+=expression.charAt(i);
+            	}
+            	else
+            	{
+            		Double t=Double.parseDouble(token);
+                    
+            		m_figures.push(t);
+
+            		token="";	//reset token
+            		
+            		if (!m_operators.isEmpty())
+            		{
+            			
+            			double a = m_figures.pop();
+            			double b= m_figures.pop();
+            			Integer c = m_operators.pop();
+            			
+            			switch(c)
+            			{
+            				case (int) '+':
+            				{
+            					m_figures.push(a+b);
+            					break;
+            				}
+            			
+            				case (int) '-':
+            				{
+            					m_figures.push(b-a);
+            					break;
+            				}
+            				
+            			}
+            			
+            		}
+            		
+            		
+            	
+            		m_operators.push((int) expression.charAt(i));
+            	}
+            	i++;
+            }
+          
             result=m_figures.pop();
-            return  result ;
+            return result ;
         }
     }
-    
     /**
      * @member @private {TextView} m_output - the display output 
      * */
@@ -127,11 +140,116 @@ public class Main extends ActionBarActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) 
         {
-            /*TextView t = (TextView)findViewById(R.id.m_display_output);
-            t.setText(id.getText());*/
+           
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    
+    public void display(View v)
+    /**
+     * Display the input 
+     * @param {View} v - a view
+     * */
+     {
+         int id = v.getId();
+         m_output=(TextView)findViewById(R.id.m_display_output);
+         
+         switch(id)
+         {
+            case R.id.m_zero :
+                {
+                    m_output.setText(m_output.getText()+"0");
+                    break;
+                }
+                
+            case R.id.m_one :
+                {
+                    m_output.setText(m_output.getText()+"1");
+                    break;
+                }
+            
+            case R.id.m_two :
+                {
+                     m_output.setText(m_output.getText()+"2");
+                    break;
+                }
+                
+            case R.id.m_three :
+                {
+                     m_output.setText(m_output.getText()+"3");
+                    break;
+                }
+            
+            case R.id.m_four :
+                {
+                    m_output.setText(m_output.getText()+"4");
+                    break;
+                }
+                
+            case R.id.m_five :
+                {
+                    m_output.setText(m_output.getText()+"5");
+                    break;
+                }
+            
+            case R.id.m_six :
+                {
+                    m_output.setText(m_output.getText()+"6");
+                    break;
+                }
+            
+            case R.id.m_seven :
+                {
+                    m_output.setText(m_output.getText()+"7");
+                    break;
+                }
+            case R.id.m_eight :
+                {
+                    m_output.setText(m_output.getText()+"8");
+                    break;
+                }
+            case R.id.m_nine:
+                {
+                    m_output.setText(m_output.getText()+"9");
+                    break;
+                }
+            
+            case R.id.m_decimal_point:
+                {
+                    m_output.setText(m_output.getText()+".");
+                    break;
+                }
+            
+            case R.id.m_addition :
+                {
+                    m_output.setText(m_output.getText()+"+");
+                    break;
+                }
+            
+            case R.id.m_substraction :
+                {
+                    m_output.setText(m_output.getText()+"-");
+                    break;
+                }
+            
+         }
+     }
+    
+    public void result(View v)
+    /**
+     * Display the result on screen
+     * @param {View} v - a view
+     **/
+    {
+        int id = v.getId();
+       
+        if (id==R.id.m_result)
+        {
+            Calculator c = new Calculator();
+            double result = c.calculate(m_output.getText().toString()+"=");
+            m_output.setText(result);
+        }
     }
 }
