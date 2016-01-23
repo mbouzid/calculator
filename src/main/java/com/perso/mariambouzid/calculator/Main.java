@@ -252,4 +252,17 @@ public class Main extends ActionBarActivity
             m_output.setText(result);
         }
     }
+    
+    public void clear(View v)
+    /**
+     * Clear the output.
+     * @param {View} v - a view
+     * */
+     {
+        int id=v.getId();
+        if (id==R.id.m_all_clear)
+        {
+            m_output.setText("");
+        }
+     }
 }
