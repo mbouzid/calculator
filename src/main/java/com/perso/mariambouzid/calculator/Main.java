@@ -1,268 +1,322 @@
-package com.perso.mariambouzid.calculator;
+package com.univangers.l3info.mbouzid.calculator;
+
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import java.util.Stack; /** used for the class Calculator **/
+import android.widget.TextView;
+import android.view.View;
+import java.util.Stack;
+import android.widget.Button;
+import android.util.Log;
 
-public class Main extends ActionBarActivity 
+public class MainActivity extends ActionBarActivity
+/**
+ *  This class is the main activity.
+ *  @class
+ *  @author Mariam Bouzid
+ *
+ * */
 {
-    
+
     public class Calculator
     /**
-     *  This class is dedicated to calculate the user's inputed operations.
-     *  @class @public
-     * */
+    *  This class is dedicated to calculate the user's inputed operations.
+    *  @class
+    * */
     {
+
+        public class CalculatorException extends Exception
         /**
-         *  This is a description of the members of the class Calculator.
-         *  @member @private {Stack<Integer>} m_operators - the operators input.
-         *  @member @private {Stack<Double>} m_figures - the figures input.
-         * */
-         private Stack<Integer> m_operators ;
-         private Stack<Double> m_figures ;
-        
+         * This class manages exception related to the calculator's input.
+         *  @class
+         *  */
+        {
+            private String m_message_error ;
+
+            public CalculatorException(String message_error)
+            /**
+             *  Public constructor.
+             *  @constructor public
+             *  @param {String} message_error - brief description of the error.
+             */
+            {
+                m_message_error=message_error;
+            }
+
+            public String what()
+            /**
+             *  Return the error message.
+             *  @method public
+             *  @return {String}
+             */
+            {
+                return m_message_error;
+            }
+
+        }
+
+        private Stack<Integer> m_operators ;
+        private Stack<Double> m_figures ;
+
         public Calculator()
         /**
-         *  Public constructor. 
-         *  It creates two empty stacks : one for the figures and the other for the operands.
-         *  @constructor @public 
+         *  Public constructor.
+         *  It creates two empty stacks : one for the figures and the other for the operators.
+         *  @constructor public
          * */
         {
             m_operators= new Stack<Integer>();
             m_figures= new Stack<Double>();
         }
-        
-        public boolean isOperator(char c) 
+
+        public boolean isOperator(char c)
         /**
          *  Return true if the character is an operator (among + , - and =) , else return false.
-         *  @method @public 
+         *  @method public
          *  @param {char} c - a character.
-         *  @return {boolean} 
+         *  @return {boolean}
          * */
         {
             return ((c=='+')||(c=='-')||(c=='='));
         }
-        
-        
-        
-        public double calculate( String expression )
+
+
+
+        public double calculate( String expression ) throws CalculatorException
         /**
-         *  Return the result of the calculation of the expression. 
+         *  Return the result of the calculation of the expression.
          *  It parses the expression and pushes the  tokens in their respective stacks.
-         *  @method @public
+         *  @method public
          *  @param {String} expression - an arithmetic expression.
          *  @return {double} - the result.
+         *  @throws {CalculatorException} - an exception is thrown if the input is incorrect.
          * */
         {
             double result=0;
             int n= expression.length();
             String token ="";
             int i=0;
+
             while(i<n)
             {
-            	if(!isOperator(expression.charAt(i)))
-            	{
-            		token+=expression.charAt(i);
-            	}
-            	else
-            	{
-            		Double t=Double.parseDouble(token);
-                    
-            		m_figures.push(t);
+                if(!isOperator(expression.charAt(i)))
+                {
+                    token+=expression.charAt(i);
+                }
+                else
+                {
+                    if (token.equals(""))
+                    {
+                        throw new CalculatorException("ERR");
+                    }
+                    else {
+                        Double t = Double.parseDouble(token);
 
-            		token="";	//reset token
-            		
-            		if (!m_operators.isEmpty())
-            		{
-            			
-            			double a = m_figures.pop();
-            			double b= m_figures.pop();
-            			Integer c = m_operators.pop();
-            			
-            			switch(c)
-            			{
-            				case (int) '+':
-            				{
-            					m_figures.push(a+b);
-            					break;
-            				}
-            			
-            				case (int) '-':
-            				{
-            					m_figures.push(b-a);
-            					break;
-            				}
-            				
-            			}
-            			
-            		}
-            		
-            		
-            	
-            		m_operators.push((int) expression.charAt(i));
-            	}
-            	i++;
+                        m_figures.push(t);
+
+                        token = "";                                     //   reset token
+
+                        if (!m_operators.isEmpty()) {
+
+                            double a = m_figures.pop();
+                            double b = m_figures.pop();
+                            Integer c = m_operators.pop();
+
+                            switch (c) {
+                                case (int) '+': {
+                                    m_figures.push(a + b);
+                                    break;
+                                }
+
+                                case (int) '-': {
+                                    m_figures.push(b - a);
+                                    break;
+                                }
+
+                            }
+
+                        }
+
+                        m_operators.push((int) expression.charAt(i));
+                    }
+                }
+                i++;
             }
-          
-            result=m_figures.pop();
+
+            result=m_figures.firstElement();
             return result ;
         }
+
+        public String printDebug()
+        /**
+         *  Print the state of the stacks.
+         *  @method public
+         *  @return {String}
+         */
+        {
+            return "Stacks Figures : " +m_figures.toString()+"\nStacks Operators : " + m_operators.toString();
+        }
     }
-    /**
-     * @member @private {TextView} m_output - the display output 
-     * */
-    private TextView m_output ;
-    
+
+
+    private TextView m_output;
+
+    private Calculator m_calculator;
+
+    private static final String s_tag ="MainActivity";
+
+    private static final String STATE_OUTPUT = "m_output";
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) 
+    protected void onCreate(Bundle savedInstanceState)
+    /**
+     *  Start activity.
+     *  @method protected
+     *  @param {Bundle} savedInstanceState
+     */
     {
+        Log.v(s_tag, "onCreate");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_debut);
+        setContentView(R.layout.activity_main);
+
+
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) 
+    protected void onSaveInstanceState(Bundle outState)
+    /**
+     *  Save the output.
+     *  @method protected
+     *  @param {Bundle} outState
+     */
     {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_debut, menu);
+        Log.v(s_tag,"onSaveInstanceState");
+
+        super.onSaveInstanceState(outState);
+
+        m_output=(TextView)findViewById(R.id.m_display_output);
+
+        outState.putString(STATE_OUTPUT,m_output.getText().toString());
+
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState (Bundle savedInstanceState)
+    /**
+     *  Restore the output.
+     *  @method protected
+     *  @param {Bundle} savedInstanceState
+     */
+    {
+        Log.v(s_tag,"onRestoreInstanceState");
+
+        super.onRestoreInstanceState(savedInstanceState);
+
+        m_output=(TextView)findViewById(R.id.m_display_output);
+
+        m_output.setText(savedInstanceState.getString(STATE_OUTPUT));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    /**
+     * Inflate the menu; this adds items to the action bar if it is present
+     *  @method public
+     *  @param {Menu} menu
+     *  @return {boolean}
+     */
+    {
+        Log.v(s_tag, "onCreateOptionsMenu");
+
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) 
+    public boolean onOptionsItemSelected(MenuItem item)
+    /**
+     *  Handle action bar item clicks here. The action bar will
+     *  automatically handle clicks on the Home/Up button, so long
+     *  as you specify a parent activity in AndroidManifest.xml.
+     *  @method public
+     *  @param {MenuItem} item
+     *  @return {boolean}
+     */
     {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        Log.v(s_tag,"onOptionsItemSelected");
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) 
+        switch (id)
         {
-           
-            return true;
+            case R.id.action_settings :
+            {
+                return true;
+            }
+
         }
 
         return super.onOptionsItemSelected(item);
     }
-    
+
     public void display(View v)
     /**
-     * Display the input 
-     * @param {View} v - a view
-     * */
-     {
-         int id = v.getId();
-         m_output=(TextView)findViewById(R.id.m_display_output);
-         
-         switch(id)
-         {
-            case R.id.m_zero :
-                {
-                    m_output.setText(m_output.getText()+"0");
-                    break;
-                }
-                
-            case R.id.m_one :
-                {
-                    m_output.setText(m_output.getText()+"1");
-                    break;
-                }
-            
-            case R.id.m_two :
-                {
-                     m_output.setText(m_output.getText()+"2");
-                    break;
-                }
-                
-            case R.id.m_three :
-                {
-                     m_output.setText(m_output.getText()+"3");
-                    break;
-                }
-            
-            case R.id.m_four :
-                {
-                    m_output.setText(m_output.getText()+"4");
-                    break;
-                }
-                
-            case R.id.m_five :
-                {
-                    m_output.setText(m_output.getText()+"5");
-                    break;
-                }
-            
-            case R.id.m_six :
-                {
-                    m_output.setText(m_output.getText()+"6");
-                    break;
-                }
-            
-            case R.id.m_seven :
-                {
-                    m_output.setText(m_output.getText()+"7");
-                    break;
-                }
-            case R.id.m_eight :
-                {
-                    m_output.setText(m_output.getText()+"8");
-                    break;
-                }
-            case R.id.m_nine:
-                {
-                    m_output.setText(m_output.getText()+"9");
-                    break;
-                }
-            
-            case R.id.m_decimal_point:
-                {
-                    m_output.setText(m_output.getText()+".");
-                    break;
-                }
-            
-            case R.id.m_addition :
-                {
-                    m_output.setText(m_output.getText()+"+");
-                    break;
-                }
-            
-            case R.id.m_substraction :
-                {
-                    m_output.setText(m_output.getText()+"-");
-                    break;
-                }
-            
-         }
-     }
-    
-    public void result(View v)
+     *  Display the input.
+     *  @method public
+     *  @param {View} v - a view
+     */
+    {
+        Log.v(s_tag,"display");
+
+        Button buttonClicked = (Button)findViewById(v.getId());
+
+        m_output=(TextView)findViewById(R.id.m_display_output);
+
+
+        m_output.setText(m_output.getText() + buttonClicked.getText().toString());
+
+    }
+
+    public void result(View v) throws Calculator.CalculatorException
     /**
-     * Display the result on screen
-     * @param {View} v - a view
+     *  Give the result of the calculation.
+     *  @method public
+     *  @param {View} v - a view
+     *  @throws {Calculator.CalculatorException} - an exception is thrown if the input is incorrect,
+     *  it will be shown in the output.
      **/
     {
-        int id = v.getId();
-       
-        if (id==R.id.m_result)
+        Log.v(s_tag,"result");
+
+        m_calculator= new Calculator();
+        Log.v(s_tag, m_calculator.printDebug());
+
+        try
         {
-            Calculator c = new Calculator();
-            double result = c.calculate(m_output.getText().toString()+"=");
-            m_output.setText(result);
+
+            double result = m_calculator.calculate(m_output.getText()+"=");
+            m_output.setText(Double.toString(result));
+
         }
+        catch(Calculator.CalculatorException e)
+        {
+            m_output.setText(e.what());
+        }
+
     }
-    
+
     public void clear(View v)
     /**
-     * Clear the output.
-     * @param {View} v - a view
-     * */
-     {
-        int id=v.getId();
-        if (id==R.id.m_all_clear)
-        {
-            m_output.setText("");
-        }
-     }
+     *  Clear the output.
+     *  @method public
+     *  @param {View} v - a view
+     **/
+    {
+        Log.v(s_tag,"clear");
+        m_output.setText("");
+    }
+
 }
